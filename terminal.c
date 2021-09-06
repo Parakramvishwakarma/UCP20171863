@@ -2,20 +2,6 @@
 #include<termios.h>
 #include"terminal.h"
 
-int main()
-{
-    char ch;
-
-    printf("please enter one character below:\n");
-
-    disableBuffer();
-    scanf(" %c", &ch);
-    enableBuffer();
-
-    printf("the char you enter is %c\n", ch);
-
-    return 0;
-}
 
 void disableBuffer()
 {
