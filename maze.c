@@ -127,9 +127,20 @@ void printmaze(char** maze, int row, int col, int player[2], int visibility){
             upper_y = col -1;
         if (lower_y < 0)
             lower_y = 0;
-        for(x = lower_x; x <= upper_x; ++x){
-            for(y =lower_y; y <= upper_y; ++y){
-                printf("%c", maze[x][y]);
+        
+        for(x = 0; x < row; ++x){
+            for(y = 0; y < col; ++y){
+                if (x<= upper_x && x >= lower_x){
+                    if (y <= upper_y && y >= lower_y){
+                        printf("%c", maze[x][y]);
+                    }
+                    else
+                        printf(" "); 
+                        
+                }
+                else
+                   printf(" ");
+                   
             }
             printf("\n");
         }
