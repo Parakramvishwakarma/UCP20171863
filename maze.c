@@ -5,25 +5,46 @@
 #include "terminal.h"
 
 char** editmaze(char** maze, int row, int col, char command, int* player_x, int*player_y);
-void printmaze(char** maze, int row, int col);
+void printmaze(char** maze, int row, int col, int player[2], int visibility);
 char** makeMaze(int *row, int *column, int goal[2], int player[2]);
-int main(void){
+int main(int argc, char* argv[]){
     char** map = NULL;
     int row;
     char command;
     int goal[2];
     int player[2];
     int col;
-
     map = makeMaze(&row, &col, goal, player);
-    disableBuffer();
-    while (player[0] != goal[0] || player[1] != goal[1]){
-        scanf(" %c", &command);
-        map = editmaze(map, row, col, command, &player[0], &player[1]);
-        printmaze(map, row, col);
+    if (argc == 1){
+        disableBuffer();
+        system("clear");
+        while (player[0] != goal[0] || player[1] != goal[1]){
+            printmaze(map, row, col, player, 0);
+            scanf(" %c", &command);
+            map = editmaze(map, row, col, command, &player[0], &player[1]);
+            system("clear");
+        }
+        printmaze(map, row, col, player, 0);
+        printf("yaya you did it");
+        enableBuffer();
     }
-    printf("yaya you did it");
-    enableBuffer();
+    else if (argc == 2){
+        int visibility= atoi(argv[1]);
+        disableBuffer();
+        system("clear");
+        while (player[0] != goal[0] || player[1] != goal[1]){
+            printmaze(map, row, col, player, visibility);
+            scanf(" %c", &command);
+            map = editmaze(map, row, col, command, &player[0], &player[1]);
+            system("clear");
+        }
+        printmaze(map, row, col, player, visibility);
+        printf("yaya you did it");
+        enableBuffer(); 
+    }
+    else{
+        printf("ERROR ONLY ONE COMMAND LINE PARAMETER ALLOWED(1-10) APART FROM EXECUTABLE NAME ");
+    }
     return 0;
 
 }
@@ -80,15 +101,39 @@ char** makeMaze(int*row, int*column, int goal[2], int player[2]){
     }
     return actualMap;
 }
-void printmaze(char** maze, int row, int col){
+void printmaze(char** maze, int row, int col, int player[2], int visibility){
     int i;
     int j;
-    for( i = 0; i < row; ++i){
-        for( j =0; j < col; ++j){
-            printf("%c", maze[i][j]);
+    if (visibility == 0){
+        for( i = 0; i < row; ++i){
+            for( j =0; j < col; ++j){
+                printf("%c", maze[i][j]);
+            }
+            printf("\n");
+        } 
+    }
+    else{
+        int x = player[0];
+        int y = player[1];
+        int lower_x = x-visibility;
+        int upper_x = x + visibility;
+        int upper_y = y + visibility;
+        int lower_y = y - visibility;
+        if (lower_x <0)
+            lower_x = 0;
+        if (upper_x >row-1)
+            upper_x = row -1;
+        if (upper_y> col -1)
+            upper_y = col -1;
+        if (lower_y < 0)
+            lower_y = 0;
+        for(x = lower_x; x <= upper_x; ++x){
+            for(y =lower_y; y <= upper_y; ++y){
+                printf("%c", maze[x][y]);
+            }
+            printf("\n");
         }
-        printf("\n");
-    } 
+    }
 }
 
 char** editmaze(char** maze, int row, int col, char command, int *player_x, int *player_y){
@@ -97,21 +142,17 @@ char** editmaze(char** maze, int row, int col, char command, int *player_x, int 
     if (command =='a'){
         next[0] = *player_x;
         next[1] = *player_y -1;
-        printf("next =%d, %d", next[0], next[1]);
-        printf("player =%d, %d", *player_x, *player_y);
         if(maze[next[0]][next[1]] == ' '){
             maze[*player_x][*player_y] = ' ';
             *player_x = next[0];
             *player_y = next[1];
             maze[*player_x][*player_y] = '<';
-            printf("player: %d, %d", *player_x, *player_y);
         }
         else if(maze[next[0]][next[1]] == 'x'){
             maze[*player_x][*player_y] = ' ';
             *player_x = next[0];
             *player_y = next[1];
             maze[*player_x][*player_y] = '<';
-            printf("player: %d, %d", *player_x, *player_y);
         }
         else if (maze[next[0]][next[1]] == 'o') {
             maze[*player_x][*player_y] = '<';
@@ -120,26 +161,21 @@ char** editmaze(char** maze, int row, int col, char command, int *player_x, int 
            
              maze[*player_x][*player_y] = '<';
         }
-        system("clear");
     }
     else if (command == 'w'){
         next[0] = *player_x-1;
         next[1] = *player_y;
-        printf("next =%d, %d", next[0], next[1]);
-        printf("player =%d, %d", *player_x, *player_y);
         if(maze[next[0]][next[1]] == ' '){
             maze[*player_x][*player_y] = ' ';
             *player_x = next[0];
             *player_y = next[1];
             maze[*player_x][*player_y] = '^';
-            printf("player: %d, %d", *player_x, *player_y);
         }
         else if(maze[next[0]][next[1]] == 'x'){
             maze[*player_x][*player_y] = ' ';
             *player_x = next[0];
             *player_y = next[1];
             maze[*player_x][*player_y] = '^';
-            printf("player: %d, %d", *player_x, *player_y);
         }
         else if(maze[next[0]][next[1]] == 'o'){
             maze[*player_x][*player_y] = '^';
@@ -147,26 +183,21 @@ char** editmaze(char** maze, int row, int col, char command, int *player_x, int 
         else{
             maze[*player_x][*player_y] = '^';
         }
-        system("clear");
     }
     else if (command == 's'){
         next[0] = *player_x+1;
         next[1] = *player_y;
-        printf("next =%d, %d", next[0], next[1]);
-        printf("player =%d, %d", *player_x, *player_y);
         if(maze[next[0]][next[1]] == ' '){
             maze[*player_x][*player_y] = ' ';
             *player_x= next[0];
             *player_y = next[1];
             maze[*player_x][*player_y] ='v';
-            printf("player: %d, %d", *player_x, *player_y);
         }
         else if(maze[next[0]][next[1]] == 'x'){
             maze[*player_x][*player_y] = ' ';
             *player_x= next[0];
             *player_y = next[1];
             maze[*player_x][*player_y] ='v';
-            printf("player: %d, %d", *player_x, *player_y);
         }
         else if(maze[next[0]][next[1]] == 'o'){
             maze[*player_x][*player_y] = 'v';
@@ -174,26 +205,21 @@ char** editmaze(char** maze, int row, int col, char command, int *player_x, int 
         else{
             maze[*player_x][*player_y] = 'v';
         }
-        system("clear");
     }
     else if (command == 'd'){
         next[0] = *player_x;
         next[1] = *player_y +1;
-        printf("next =%d, %d", next[0], next[1]);
-        printf("player =%d, %d", *player_x, *player_y);
         if(maze[next[0]][next[1]] == ' '){
             maze[*player_x][*player_y] = ' ';
             *player_x= next[0];
             *player_y = next[1];
             maze[*player_x][*player_y] ='>';
-            printf("player: %d, %d", *player_x, *player_y);
         }
         else if(maze[next[0]][next[1]] == 'x'){
             maze[*player_x][*player_y] = ' ';
             *player_x= next[0];
             *player_y = next[1];
             maze[*player_x][*player_y] ='>';
-            printf("player: %d, %d", *player_x, *player_y);
         }
         else if(maze[next[0]][next[1]] == 'o'){
             maze[*player_x][*player_y] = '>';
@@ -201,10 +227,8 @@ char** editmaze(char** maze, int row, int col, char command, int *player_x, int 
         else{
             maze[*player_x][*player_y] = '>';
         }
-        system("clear");
     }
-    else{
+    else
         printf("ERROR in the input");
-    }
     return maze;
 }
