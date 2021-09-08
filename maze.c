@@ -3,37 +3,43 @@
 #include "map.h"
 #include<stdlib.h>
 #include "terminal.h"
+#include "makeMaze.h"
+
 
 char** editmaze(char** maze, int row, int col, char command, int* player_x, int*player_y);
 void printmaze(char** maze, int row, int col, int player[2], int visibility);
-char** makeMaze(int *row, int *column, int goal[2], int player[2]);
+/*char** makeMaze(int *row, int *column, int goal[2], int player[2]);*/
 int main(int argc, char* argv[]){
-    char** map = NULL;
-    int row;
-    char command;
-    int goal[2];
-    int player[2];
-    int col;
-    map = makeMaze(&row, &col, goal, player);
+    char** map = NULL;  /* map variable to store the intial 2 array maze*/
+    int row;    /* integer to store the amoiunt of rows in the maze*/
+    char command; /* char variable to store the input */
+    int goal[2]; /* int array to store the goal cordinates*/
+    int player[2]; /* int array to sotre the the player coordinates*/
+    int col;    /* integer to store the amoiunt of cols in the maze*/
+    map = makeMaze(&row, &col, goal, player); /* make intiial mazee from the getData function*/
+    argc = 1; /* set argc to one for the DEBUG conditional compilation*/
+    #ifdef DARK 
+    argc = 2;   /* will be made 2 if DEBUG is defined hence allowing to reach the visibility*/
+    #endif
     if (argc == 1){
-        disableBuffer();
+        disableBuffer();    /* buffer disabled*/
         system("clear");
-        while (player[0] != goal[0] || player[1] != goal[1]){
+        while (player[0] != goal[0] || player[1] != goal[1]){ /*loop that lasts while the character doesnt win*/
             printmaze(map, row, col, player, 0);
-            scanf(" %c", &command);
-            map = editmaze(map, row, col, command, &player[0], &player[1]);
+            scanf(" %c", &command); /*input from the player*/
+            map = editmaze(map, row, col, command, &player[0], &player[1]); /*make the new map from editmaze also opdates the player array*/
             system("clear");
         }
         printmaze(map, row, col, player, 0);
         printf("yaya you did it");
         enableBuffer();
     }
-    else if (argc == 2){
-        int visibility= atoi(argv[1]);
+    else if (argc == 2){   /* if the DEBUG defined*/
+        int visibility= atoi(argv[1]);  /* convert the commandline visibility to integer*/
         disableBuffer();
         system("clear");
         while (player[0] != goal[0] || player[1] != goal[1]){
-            printmaze(map, row, col, player, visibility);
+            printmaze(map, row, col, player, visibility);   
             scanf(" %c", &command);
             map = editmaze(map, row, col, command, &player[0], &player[1]);
             system("clear");
@@ -43,68 +49,16 @@ int main(int argc, char* argv[]){
         enableBuffer(); 
     }
     else{
+        /*ERROR MESSAGE JUST INCASE*/
         printf("ERROR ONLY ONE COMMAND LINE PARAMETER ALLOWED(1-10) APART FROM EXECUTABLE NAME ");
     }
     return 0;
 
 }
-char** makeMaze(int*row, int*column, int goal[2], int player[2]){
-    int i;
-    int j;
-    int **maze =NULL;
-    char **actualMap;
-    int metadataAmt;
-    int mapRow;
-    int mapCol;
-    getMetadata(&maze, &metadataAmt, &mapRow, &mapCol);
-    *row = mapRow;
-    *column = mapCol;
-    actualMap = (char**)malloc(mapRow*sizeof(char*));
-    for (i = 0; i < mapRow; ++i){
-        actualMap[i] = (char*)malloc(mapCol*sizeof(char));
-        for(j = 0; j < mapCol; ++j){
-            actualMap[i][j] = ' ';
-        }
-    }
-    for(j = 1; j < (mapCol-1); ++j){                        /*this code sets the boundary on the maze*/
-        int dashrow = mapRow - 1;
-        actualMap[0][j] = '-';
-        actualMap[dashrow][j] = '-';
-    }
-    actualMap[0][0] = '#';
-    actualMap[mapRow-1][0] = '#';
-    actualMap[0][mapCol-1] = '#';
-    actualMap[mapRow-1][mapCol-1] = '#';
-    for (i = 1; i < (mapRow-1); ++i){
-        actualMap[i][0]= '|';
-        actualMap[i][mapCol -1] = '|';
-    }
-    for (i = 0; i < metadataAmt; ++i){
-        int x_coor;
-        int y_coor;
-        int type;
-        x_coor = maze[i][0];
-        y_coor = maze[i][1];
-        type = maze[i][2];
-        if (type == 0){
-            actualMap[x_coor][y_coor] = '^';
-            player[1] = y_coor;
-            player[0] = x_coor;
-        }
-        else if (type == 1){
-            actualMap[x_coor][y_coor] = 'x';
-            goal[0] = x_coor;
-            goal[1] = y_coor;
-        }
-        else
-            actualMap[x_coor][y_coor] = 'o';
-    }
-    return actualMap;
-}
+/*function to print every version of the maze after the character has bee nmovd*/
 void printmaze(char** maze, int row, int col, int player[2], int visibility){
-    int i;
-    int j;
-    if (visibility == 0){
+    int i,j;
+    if (visibility == 0){/*if the visibility is 0 means full view all map is printed*/
         for( i = 0; i < row; ++i){
             for( j =0; j < col; ++j){
                 printf("%c", maze[i][j]);
@@ -115,11 +69,11 @@ void printmaze(char** maze, int row, int col, int player[2], int visibility){
     else{
         int x = player[0];
         int y = player[1];
-        int lower_x = x-visibility;
+        int lower_x = x-visibility; /*depending on the visibility this coce determines what range of row and colimns to make visible*/
         int upper_x = x + visibility;
         int upper_y = y + visibility;
         int lower_y = y - visibility;
-        if (lower_x <0)
+        if (lower_x <0)/* to avoid segmentation fault by accessing memory not allocated to us*/
             lower_x = 0;
         if (upper_x >row-1)
             upper_x = row -1;
@@ -128,14 +82,14 @@ void printmaze(char** maze, int row, int col, int player[2], int visibility){
         if (lower_y < 0)
             lower_y = 0;
         
-        for(x = 0; x < row; ++x){
+        for(x = 0; x < row; ++x){   /*prints the only the part of the maze whcih is allowed to be visible according to commandline*/
             for(y = 0; y < col; ++y){
                 if (x<= upper_x && x >= lower_x){
                     if (y <= upper_y && y >= lower_y){
                         printf("%c", maze[x][y]);
                     }
                     else
-                        printf(" "); 
+                        printf(" "); /*print a space where ever there is no visibility*/
                         
                 }
                 else
@@ -148,16 +102,16 @@ void printmaze(char** maze, int row, int col, int player[2], int visibility){
 }
 
 char** editmaze(char** maze, int row, int col, char command, int *player_x, int *player_y){
-    int next[2];
-
-    if (command =='a'){
-        next[0] = *player_x;
+/* function to change the maze according to the commands by the user of w,a,s,d*/
+    int next[2];/*2 int array to store coordinates of the next move*/
+    if (command =='a'){             /*what to do if the command is 'a'*/
+        next[0] = *player_x;    /*determine where the coordinates of the player after the move*/
         next[1] = *player_y -1;
-        if(maze[next[0]][next[1]] == ' '){
-            maze[*player_x][*player_y] = ' ';
-            *player_x = next[0];
+        if(maze[next[0]][next[1]] == ' ' ){/* if/else set to check if we are allowed to move to the next step or its wall*/
+            maze[*player_x][*player_y] = ' ';/* if allowed to move to the coordinates of the next[2] then make the old player coordinates ' '*/
+            *player_x = next[0]; /*update player coodrinates*/
             *player_y = next[1];
-            maze[*player_x][*player_y] = '<';
+            maze[*player_x][*player_y] = '<';/*change player symbol*/
         }
         else if(maze[next[0]][next[1]] == 'x'){
             maze[*player_x][*player_y] = ' ';
@@ -165,15 +119,14 @@ char** editmaze(char** maze, int row, int col, char command, int *player_x, int 
             *player_y = next[1];
             maze[*player_x][*player_y] = '<';
         }
-        else if (maze[next[0]][next[1]] == 'o') {
-            maze[*player_x][*player_y] = '<';
+        else if (maze[next[0]][next[1]] == 'o') {/* if the obeject at next coordinate is 'o' then we cannot go there player remains at player[2] coordinates*/
+            maze[*player_x][*player_y] = '<';/* player[2] --> coordinates of player arent updated they remain the same*/
         }
-        else{
-           
+        else{  
              maze[*player_x][*player_y] = '<';
         }
     }
-    else if (command == 'w'){
+    else if (command == 'w'){/* repitition of the code above with a seperate command*/
         next[0] = *player_x-1;
         next[1] = *player_y;
         if(maze[next[0]][next[1]] == ' '){
