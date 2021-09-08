@@ -4,16 +4,14 @@
 #include<stdlib.h>
 #include "terminal.h"
 #include "makeMaze.h"
-
+#include "printMap.h"
 
 char** editmaze(char** maze, int row, int col, char command, int* player_x, int*player_y);
-void printmaze(char** maze, int row, int col, int player[2], int visibility);
-/*char** makeMaze(int *row, int *column, int goal[2], int player[2]);*/
 int main(int argc, char* argv[]){
     int i;
     char** map = NULL;  /* map variable to store the intial 2 array maze*/
     int row;    /* integer to store the amoiunt of rows in the maze*/
-    char command; /* char variable to store the input */
+    char command; /* char variable to store the input*/
     int* goal; /* int array to store the goal cordinates*/
     int *player; /* int array to sotre the the player coordinates*/
     int col;    /* integer to store the amoiunt of cols in the maze*/
@@ -67,51 +65,6 @@ int main(int argc, char* argv[]){
     player = NULL;
     return 0;
 
-}
-/*function to print every version of the maze after the character has bee nmovd*/
-void printmaze(char** maze, int row, int col, int player[2], int visibility){
-    int i,j;
-    if (visibility == 0){/*if the visibility is 0 means full view all map is printed*/
-        for( i = 0; i < row; ++i){
-            for( j =0; j < col; ++j){
-                printf("%c", maze[i][j]);
-            }
-            printf("\n");
-        } 
-    }
-    else{
-        int x = player[0];
-        int y = player[1];
-        int lower_x = x-visibility; /*depending on the visibility this coce determines what range of row and colimns to make visible*/
-        int upper_x = x + visibility;
-        int upper_y = y + visibility;
-        int lower_y = y - visibility;
-        if (lower_x <0)/* to avoid segmentation fault by accessing memory not allocated to us*/
-            lower_x = 0;
-        if (upper_x >row-1)
-            upper_x = row -1;
-        if (upper_y> col -1)
-            upper_y = col -1;
-        if (lower_y < 0)
-            lower_y = 0;
-        
-        for(x = 0; x < row; ++x){   /*prints the only the part of the maze whcih is allowed to be visible according to commandline*/
-            for(y = 0; y < col; ++y){
-                if (x<= upper_x && x >= lower_x){
-                    if (y <= upper_y && y >= lower_y){
-                        printf("%c", maze[x][y]);
-                    }
-                    else
-                        printf(" "); /*print a space where ever there is no visibility*/
-                        
-                }
-                else
-                   printf(" ");
-                   
-            }
-            printf("\n");
-        }
-    }
 }
 
 char** editmaze(char** maze, int row, int col, char command, int *player_x, int *player_y){
