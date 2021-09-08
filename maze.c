@@ -10,12 +10,15 @@ char** editmaze(char** maze, int row, int col, char command, int* player_x, int*
 void printmaze(char** maze, int row, int col, int player[2], int visibility);
 /*char** makeMaze(int *row, int *column, int goal[2], int player[2]);*/
 int main(int argc, char* argv[]){
+    int i;
     char** map = NULL;  /* map variable to store the intial 2 array maze*/
     int row;    /* integer to store the amoiunt of rows in the maze*/
     char command; /* char variable to store the input */
-    int goal[2]; /* int array to store the goal cordinates*/
-    int player[2]; /* int array to sotre the the player coordinates*/
+    int* goal; /* int array to store the goal cordinates*/
+    int *player; /* int array to sotre the the player coordinates*/
     int col;    /* integer to store the amoiunt of cols in the maze*/
+    player = (int*)malloc(sizeof(int)*2);
+    goal  = (int*)malloc(sizeof(int)*2);
     map = makeMaze(&row, &col, goal, player); /* make intiial mazee from the getData function*/
     argc = 1; /* set argc to one for the DEBUG conditional compilation*/
     #ifdef DARK 
@@ -52,6 +55,16 @@ int main(int argc, char* argv[]){
         /*ERROR MESSAGE JUST INCASE*/
         printf("ERROR ONLY ONE COMMAND LINE PARAMETER ALLOWED(1-10) APART FROM EXECUTABLE NAME ");
     }
+    for(i = 0; i < row; ++i){
+        free(map[i]);
+        map[i] = NULL;
+    }
+    free(goal);
+    free(player);
+    free(map);
+    map = NULL;
+    goal = NULL;
+    player = NULL;
     return 0;
 
 }
