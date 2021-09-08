@@ -55,5 +55,11 @@ char** makeMaze(int*row, int*column, int goal[2], int player[2]){
         else
             actualMap[x_coor][y_coor] = 'o';/* same as above but with wall object*/
     }
+    for(i = 0; i<metadataAmt; ++i){
+        free(maze[i]);
+        maze[i] = NULL;
+    }
+    free(maze);
+    maze = NULL;
     return actualMap;
 }
