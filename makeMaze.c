@@ -17,7 +17,7 @@ char** makeMaze(int*row, int*column, int goal[2], int player[2]){
     *column = mapCol;   /* set pointers which will be sent to the main fucntion*/
     actualMap = (char**)malloc(mapRow*sizeof(char*)); /* malloc heap memeory for the array of intial maze*/
     for (i = 0; i < mapRow; ++i){
-        actualMap[i] = (char*)malloc(mapCol*sizeof(char));
+        actualMap[i] = (char*)malloc(mapCol*sizeof(char)); /*freed in the main function*/
         for(j = 0; j < mapCol; ++j){
             actualMap[i][j] = ' ';
         }
