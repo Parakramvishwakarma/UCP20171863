@@ -8,17 +8,17 @@
 
 char** editmaze(char** maze, int row, int col, char command, int* player_x, int*player_y);
 int main(int argc, char* argv[]){
-    int i, x;
+    int i, x; /*varuable for for loop and, x- var for condiitonal compilation*/
     char** map = NULL;  /* map variable to store the intial 2 array maze*/
     int row;    /* integer to store the amoiunt of rows in the maze*/
     char command; /* char variable to store the input*/
     int* goal; /* int array to store the goal cordinates*/
     int *player; /* int array to sotre the the player coordinates*/
     int col;    /* integer to store the amoiunt of cols in the maze*/
-    player = (int*)malloc(sizeof(int)*2);
+    player = (int*)malloc(sizeof(int)*2);/*malloc to get memory on the heap for both the player and goal array*/
     goal  = (int*)malloc(sizeof(int)*2);
     map = makeMaze(&row, &col, goal, player); /* make intiial mazee from the getData function*/
-    x = 1; /* set argc to one for the DEBUG conditional compilation*/
+    x = 1; /* set x to one for the DEBUG conditional compilation*/
     #ifdef DARK 
     x = 2;   /* will be made 2 if DEBUG is defined hence allowing to reach the visibility*/
     #endif
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
             system("clear");
         }
         printmaze(map, row, col, player, 0);
-        printf("yaya you did it");
+        printf("YAY! you won");
         enableBuffer();
     }
     else if (x == 2){   /* if the DEBUG defined*/
@@ -61,12 +61,12 @@ int main(int argc, char* argv[]){
         /*ERROR MESSAGE JUST INCASE*/
         printf("ERROR ONLY ONE COMMAND LINE PARAMETER ALLOWED(1-10) APART FROM EXECUTABLE NAME ");
     }
-    for(i = 0; i < row; ++i){
+    for(i = 0; i < row; ++i){ /*freeing every row of the double pointer*/
         free(map[i]);
         map[i] = NULL;
     }
-    free(goal);
-    free(player);
+    free(goal); /* freeing the int array of goal*/
+    free(player);/*freeing the int array of player coordinates*/
     free(map);
     map = NULL;
     goal = NULL;
