@@ -5,10 +5,10 @@
 
 /*function to extract intial layout of the maze from map.c*/
 char** makeMaze(int*row, int*column, int goal[2], int player[2]){
-    int i;
+    int i;  /*declare variables for for loop*/
     int j;
-    int **maze =NULL;
-    char **actualMap;
+    int **maze =NULL; /*declare 2D array for storing the table from getMetadata()*/
+    char **actualMap= NULL; /*declaring the 2D char array for storing the maze itself*/
     int metadataAmt;
     int mapRow;
     int mapCol;
