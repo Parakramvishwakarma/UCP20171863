@@ -3,7 +3,7 @@
 #include "printMap.h"
 /*function to print every version of the maze after the character has bee nmovd*/
 void printmaze(char** maze, int row, int col, int player[2], int visibility){
-    int i,j;
+    int i,j;/*varualble for for loop*/
     if (visibility == 0){/*if the visibility is 0 means full view all map is printed*/
         for( i = 0; i < row; ++i){
             for( j =0; j < col; ++j){
