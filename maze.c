@@ -8,7 +8,7 @@
 
 char** editmaze(char** maze, int row, int col, char command, int* player_x, int*player_y);
 int main(int argc, char* argv[]){
-    int i;
+    int i, x;
     char** map = NULL;  /* map variable to store the intial 2 array maze*/
     int row;    /* integer to store the amoiunt of rows in the maze*/
     char command; /* char variable to store the input*/
@@ -18,11 +18,14 @@ int main(int argc, char* argv[]){
     player = (int*)malloc(sizeof(int)*2);
     goal  = (int*)malloc(sizeof(int)*2);
     map = makeMaze(&row, &col, goal, player); /* make intiial mazee from the getData function*/
-    argc = 1; /* set argc to one for the DEBUG conditional compilation*/
+    x = 1; /* set argc to one for the DEBUG conditional compilation*/
     #ifdef DARK 
-    argc = 2;   /* will be made 2 if DEBUG is defined hence allowing to reach the visibility*/
+    x = 2;   /* will be made 2 if DEBUG is defined hence allowing to reach the visibility*/
     #endif
-    if (argc == 1){
+    if (x == 1){
+        if (argc == 2){
+            printf("DARK MODE IS OFF, VISIBLITY SET TO DEFAULT 0");
+        }
         disableBuffer();    /* buffer disabled*/
         system("clear");
         while (player[0] != goal[0] || player[1] != goal[1]){ /*loop that lasts while the character doesnt win*/
@@ -35,19 +38,24 @@ int main(int argc, char* argv[]){
         printf("yaya you did it");
         enableBuffer();
     }
-    else if (argc == 2){   /* if the DEBUG defined*/
-        int visibility= atoi(argv[1]);  /* convert the commandline visibility to integer*/
-        disableBuffer();
-        system("clear");
-        while (player[0] != goal[0] || player[1] != goal[1]){
-            printmaze(map, row, col, player, visibility);   
-            scanf(" %c", &command);
-            map = editmaze(map, row, col, command, &player[0], &player[1]);
+    else if (x == 2){   /* if the DEBUG defined*/
+        if (argc == 1)
+            printf("DARK mode is on, please give visibility value");
+        else{   
+            int visibility= atoi(argv[1]);  /* convert the commandline visibility to integer*/
+            disableBuffer();
             system("clear");
+            while (player[0] != goal[0] || player[1] != goal[1]){
+                printmaze(map, row, col, player, visibility);   
+                scanf(" %c", &command);
+                map = editmaze(map, row, col, command, &player[0], &player[1]);
+                system("clear");
+            }
+            printmaze(map, row, col, player, visibility);
+            printf("yaya you did it");
+            enableBuffer(); 
         }
-        printmaze(map, row, col, player, visibility);
-        printf("yaya you did it");
-        enableBuffer(); 
+        
     }
     else{
         /*ERROR MESSAGE JUST INCASE*/
